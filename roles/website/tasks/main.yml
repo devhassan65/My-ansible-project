@@ -1,0 +1,35 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for roles/website
+- name: Ensure /var/www/html exists
+  file:
+    path: /var/www/html
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: '0755'
+
+- name: Copy website template
+  template:
+    src: index.html.j2
+    dest: /var/www/html/index.html
+    owner: www-data
+    group: www-data
+    mode: '0644'
+
+- name: Pull latest NGINX image
+  community.docker.docker_image:
+    name: nginx
+    source: pull
+
+- name: Run NGINX container
+  community.docker.docker_container:
+    name: mywebsite
+    image: nginx:latest
+    state: started
+    ports:
+      - "80:80"
+    volumes:
+      - "/var/www/html:/usr/share/nginx/html"
+    restart_policy: always
+
