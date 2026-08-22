@@ -3,12 +3,6 @@ pipeline {
 
     stages {
 
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-
         stage('Install Ansible Collections') {
             steps {
                 sh '''
@@ -40,8 +34,6 @@ pipeline {
                             playbook/site.yml \
                             --private-key "$SSH_KEY" \
                             --vault-password-file vault_pass.txt
-
-                        rm -f vault_pass.txt
                     '''
                 }
             }
